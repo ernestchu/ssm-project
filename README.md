@@ -8,7 +8,7 @@
 
 ### TODO list
 - [ ] Task 1 (assignee: Ernie)
-- Task 2
+- [ ] Task 2
   - [ ] Generate QA pairs using GPT4o  (assignee: )
   - [ ] Run evaluation  (assignee: )
 
