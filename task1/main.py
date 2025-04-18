@@ -1,7 +1,6 @@
 import argparse
 import pandas as pd
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from accelerate import Accelerator
 import torch
 from tqdm import tqdm
 from huggingface_hub import login
@@ -11,23 +10,7 @@ import os
 
 
 # Prompt for the task
-PROMPT = "It is {month} {year} and {formulation}"
-
-# Dictionary to map month numbers to text form
-MONTHS = {
-    1: "January",
-    2: "February",
-    3: "March",
-    4: "April",
-    5: "May",
-    6: "June",
-    7: "July",
-    8: "August",
-    9: "September",
-    10: "October",
-    11: "November",
-    12: "December",
-}
+PROMPT = "{formulation} Answer in YYYY/MM/DD, the news about this event are published on "
 
 # Load model and tokenizer with model parallelism using device_map
 def load_model_and_tokenizer(model_name):
@@ -42,9 +25,13 @@ def load_model_and_tokenizer(model_name):
     )
     return tokenizer, model
 
+@torch.no_grad()
+def predict_date(model, tokenizer, text):
+    '''
+    Predict the date of a given text using autoregressive LLM.
+    Returns: year, month, day
+    '''
 
-# Function to calculate log probability of a given sentence
-def calculate_logprob(model, tokenizer, text):
     inputs = tokenizer(text, return_tensors="pt").to(model.device)
     # Remove 'token_type_ids' from inputs if it exists (for models like Mistral that don't use it)
     if "token_type_ids" in inputs:
@@ -53,28 +40,25 @@ def calculate_logprob(model, tokenizer, text):
     # Move all inputs to the same device as the model
     inputs = {key: value.to(model.device) for key, value in inputs.items()}
 
-    with torch.no_grad():
-        # Ensure `use_cache=False` for inference, as we're not using past_key_values here
-        outputs = model(**inputs, use_cache=False)
+    digit_token_ids = torch.tensor([tokenizer(str(d), add_special_tokens=False)['input_ids'][0] for d in range(10)], device=model.device)
+    slash_token_id = tokenizer("/", add_special_tokens=False)["input_ids"][0]
+    past_key_values = None
+    for i in range(10):
+        if i in [4, 7]:  # Add slashes at positions 4 and 7, avoiding extra model inference
+            inputs["input_ids"] = torch.cat([inputs["input_ids"], torch.tensor([[slash_token_id]], device=model.device)], dim=1)
+            inputs["attention_mask"] = torch.cat([inputs["attention_mask"], torch.ones((1, 1), device=model.device)], dim=1)
+            continue
+        outputs = model(**inputs) # this adds batch dimension
+        past_key_values = outputs.past_key_values
+        digit_logits = outputs.logits[:, -1, digit_token_ids]  # Get the logits corresponding to digits for the last token
+        pred_digit_token_ids = digit_token_ids[digit_logits.argmax(-1, keepdim=True)]  # Get the predicted digit token ids
 
-    # Get the log probabilities
-    logits = outputs.logits
-    shift_logits = logits[..., :-1, :].contiguous()  # Shift the logits
-    shift_labels = inputs["input_ids"][..., 1:].contiguous()  # Shift the labels
+        inputs["input_ids"] = torch.cat([inputs["input_ids"], pred_digit_token_ids], dim=1)  # Append the predicted digit token id to the input ids
+        inputs["attention_mask"] = torch.cat([inputs["attention_mask"], torch.ones((1, 1), device=model.device)], dim=1)
 
-    log_probs = torch.nn.functional.log_softmax(shift_logits, dim=-1)
+    pred_date = tokenizer.batch_decode(inputs["input_ids"])[0][-10:]
 
-    # Gather log probabilities of the actual tokens in the text
-    log_probs_for_labels = log_probs.gather(-1, shift_labels.unsqueeze(-1)).squeeze(-1)
-
-    # Total log probability for the sequence
-    total_logprob = log_probs_for_labels.sum().item()
-
-    return (
-        total_logprob,
-        len(inputs["input_ids"][0].tolist()),
-        log_probs_for_labels.tolist(),
-    )
+    return [int(p) for p in pred_date.split('/')]
 
 
 def test_model_on_dataset(model_name, dataset, output_file=None):
@@ -91,15 +75,14 @@ def test_model_on_dataset(model_name, dataset, output_file=None):
                 "idx",
                 "year",
                 "month",
+                "day",
                 "category",
                 "model",
                 "formulation",
-                "tokens",
-                "log_probs",
-                "sum_log_probs",
                 "input_text",
                 "correct_year",
                 "correct_month",
+                "correct_day",
             ]
         )
 
@@ -110,36 +93,28 @@ def test_model_on_dataset(model_name, dataset, output_file=None):
 
             formulations = {
                 "original_sentence": row["formulation_1"],
-                "paraphrase_1": row["formulation_2"],
-                "paraphrase_2": row["formulation_3"],
-                "paraphrase_3": row["formulation_4"],
-                "paraphrase_4": row["formulation_5"],
+                # "paraphrase_1": row["formulation_2"],
+                # "paraphrase_2": row["formulation_3"],
+                # "paraphrase_3": row["formulation_4"],
+                # "paraphrase_4": row["formulation_5"],
             }
 
-            # Generate prompts for each month in 2022 and 2023 and for each formulation
             for key, formulation in formulations.items():
                 logprobs = []
-                for year in [2022, 2023]:
-                    for month in range(1, 13):
-                        # Generate prompt, avoid extra dot if formulation already ends with a dot
-                        if not formulation.endswith("."):
-                            formulation = formulation + "."
-                        input_text = PROMPT.format(
-                            month=MONTHS[month], year=year, formulation=formulation
-                        )
+                if not formulation.endswith("."):
+                    formulation = formulation + "."
+                PROMPT = "{formulation} Answer in YYYY/MM/DD, the news about this event are published in "
+                input_text = PROMPT.format(formulation=formulation)
+                year, month, day = predict_date(model, tokenizer, input_text)
 
-                        # Calculate log probabilities
-                        sum_log_prob, num_tokens, token_log_probs = calculate_logprob(model, tokenizer, input_text)
-                        logprobs.append(
-                            {
-                                "month": month,
-                                "year": year,
-                                "sum_log_prob": sum_log_prob,
-                                "input_text": input_text,
-                                "num_tokens": num_tokens,
-                                "log_probs": token_log_probs,
-                            }
-                        )
+                logprobs.append(
+                    {
+                        "year": year,
+                        "month": month,
+                        "day": day,
+                        "input_text": input_text,
+                    }
+                )
 
                 # Write the results to the CSV file as we go so we don't lose progress in case of a crash
                 for logprob_entry in logprobs:
@@ -148,15 +123,14 @@ def test_model_on_dataset(model_name, dataset, output_file=None):
                             index,
                             logprob_entry["year"],
                             logprob_entry["month"],
+                            logprob_entry["day"],
                             category,
                             model_name,
                             key,
-                            logprob_entry["num_tokens"],
-                            logprob_entry["log_probs"],
-                            logprob_entry["sum_log_prob"],
                             logprob_entry["input_text"],
                             row["year"],
                             row["month"],
+                            row["day"],
                         ]
                     )
 
@@ -170,81 +144,43 @@ def calculate_accuracy(output_file):
     df = pd.read_csv(output_file)
     num_events = len(df["idx"].unique())
 
-    # Get the top-5 most probable sentences for each idx (event)
-    top_5_first_phrases = (
-        df[df["formulation"] == "original_sentence"]
-        .groupby("idx")
-        .apply(lambda x: x.nlargest(5, "sum_log_probs"))
-        .reset_index(drop=True)
-    )
+    df = df[df["formulation"] == "original_sentence"]
 
-    # Top-1 Accuracy
-    # Get the most probable sentence
-    top_1_first_phrases = top_5_first_phrases.groupby("idx").head(1) 
-    correct_top_1_phrases = top_1_first_phrases[
-        (top_1_first_phrases["year"] == top_1_first_phrases["correct_year"])
-        & (top_1_first_phrases["month"] == top_1_first_phrases["correct_month"])
+    correct_y = df[
+        (df["year"] == df["correct_year"])
     ]
-    top_1_accuracy = len(correct_top_1_phrases) / num_events
-
-    # Top-3 Accuracy
-    top_3_first_phrases = top_5_first_phrases.groupby("idx").head(3)
-    correct_top_3_phrases = top_3_first_phrases[
-        (top_3_first_phrases["year"] == top_3_first_phrases["correct_year"])
-        & (top_3_first_phrases["month"] == top_3_first_phrases["correct_month"])
+    correct_ym = df[
+        (df["year"] == df["correct_year"])
+        & (df["month"] == df["correct_month"])
     ]
-    top_3_accuracy = len(correct_top_3_phrases) / num_events
-
-    # Top-5 Accuracy
-    correct_top_5_phrases = top_5_first_phrases[
-        (top_5_first_phrases["year"] == top_5_first_phrases["correct_year"])
-        & (top_5_first_phrases["month"] == top_5_first_phrases["correct_month"])
+    correct_ymd = df[
+        (df["year"] == df["correct_year"])
+        & (df["month"] == df["correct_month"])
+        & (df["day"] == df["correct_day"])
     ]
-    top_5_accuracy = len(correct_top_5_phrases) / num_events
+    correct_ymd3 = df[
+        (df["year"] == df["correct_year"])
+        & (df["month"] == df["correct_month"])
+        & ((df["day"] - df["correct_day"]).abs() <= 3)
+    ]
+    correct_ymd5 = df[
+        (df["year"] == df["correct_year"])
+        & (df["month"] == df["correct_month"])
+        & ((df["day"] - df["correct_day"]).abs() <= 5)
+    ]
+    correct_ymd10 = df[
+        (df["year"] == df["correct_year"])
+        & (df["month"] == df["correct_month"])
+        & ((df["day"] - df["correct_day"]).abs() <= 10)
+    ]
+    y_accuracy = len(correct_y) / num_events
+    ym_accuracy = len(correct_ym) / num_events
+    ymd_accuracy = len(correct_ymd) / num_events
+    ymd3_accuracy = len(correct_ymd3) / num_events
+    ymd5_accuracy = len(correct_ymd5) / num_events
+    ymd10_accuracy = len(correct_ymd10) / num_events
     
-    return top_1_accuracy, top_3_accuracy, top_5_accuracy
-
-
-def calculate_stability(output_file):
-    # Computes the probability that given the original sentence was correctly
-    # classified, the paraphrases are also correctly classified
-    df = pd.read_csv(output_file)
-
-    # Find events where the original sentence was correctly classified
-    most_probable_original_sentences = df.loc[
-        df[df["formulation"] == "original_sentence"]
-        .groupby("idx")["sum_log_probs"]
-        .idxmax()
-    ]
-    correct_original_sentences = most_probable_original_sentences[
-        (
-            most_probable_original_sentences["year"]
-            == most_probable_original_sentences["correct_year"]
-        )
-        & (
-            most_probable_original_sentences["month"]
-            == most_probable_original_sentences["correct_month"]
-        )
-    ]
-
-    correct_indices = correct_original_sentences["idx"]
-    df = df[
-        df["idx"].isin(correct_indices) & (df["formulation"] != "original_sentence")
-    ]  # Drop the original sentence from the list of sentences
-
-    # For paraphrase, find the most probable sentence
-    most_probable_sentences = df.loc[
-        df.groupby(["idx", "formulation"])["sum_log_probs"].idxmax()
-    ]
-    correct_sentences = most_probable_sentences[
-        (most_probable_sentences["year"] == most_probable_sentences["correct_year"])
-        & (most_probable_sentences["month"] == most_probable_sentences["correct_month"])
-    ]
-
-    # Calculate the stability
-    stability = len(correct_sentences) / len(most_probable_sentences)
-    return stability
-
+    return y_accuracy, ym_accuracy, ymd_accuracy, ymd3_accuracy, ymd5_accuracy, ymd10_accuracy
 
 def main():
     # Parse command-line arguments
@@ -277,15 +213,18 @@ def main():
         raise ValueError("If no result file exists, you must specify --model_name to generate it")
 
     # calculate accuracy and stability
-    top_1_accuracy, top_3_accuracy, top_5_accuracy = calculate_accuracy(output_file)
+    y_accuracy, ym_accuracy, ymd_accuracy, ymd3_accuracy, ymd5_accuracy, ymd10_accuracy = calculate_accuracy(output_file)
     print("-" * 40)
-    print(f"Top-1 Accuracy: {top_1_accuracy:.2%}")
-    print(f"Top-3 Accuracy: {top_3_accuracy:.2%}")
-    print(f"Top-5 Accuracy: {top_5_accuracy:.2%}")
+    print(f"Year Accuracy: {y_accuracy:.2%}")
+    print(f"Year Month Accuracy: {ym_accuracy:.2%}")
+    print(f"Year Month Day Accuracy: {ymd_accuracy:.2%}")
+    print(f"Year Month Day +/- 3 Accuracy: {ymd3_accuracy:.2%}")
+    print(f"Year Month Day +/- 5 Accuracy: {ymd5_accuracy:.2%}")
+    print(f"Year Month Day +/- 10 Accuracy: {ymd10_accuracy:.2%}")
 
-    stability = calculate_stability(output_file)
-    print(f"Stability: {stability:.2%}")
-    print("-" * 40)
+    # stability = calculate_stability(output_file)
+    # print(f"Stability: {stability:.2%}")
+    # print("-" * 40)
 
 if __name__ == "__main__":
     main()
