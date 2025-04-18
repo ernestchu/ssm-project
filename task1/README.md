@@ -1,5 +1,8 @@
 # Task 1
 
+### TODO
+- drop data beyond models' cut-off date
+
 ### Quick Start
 Environment setup:
 ```sh
