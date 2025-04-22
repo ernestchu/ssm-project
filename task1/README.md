@@ -2,6 +2,7 @@
 
 ### TODO
 - drop data beyond models' cut-off date
+- ICL (prepend examples QA to the prompt)
 
 ### Quick Start
 Environment setup:
