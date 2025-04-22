@@ -12,5 +12,5 @@ MODELS=(
 # 2) Iterate over each entry and call your script
 for MODEL in "${MODELS[@]}"; do
   echo "=== Model: $MODEL ==="
-  python main.py --output_file "${MODEL//\//_}_results.csv"
+  python main.py --output_file "results/${MODEL//\//_}_results.csv"
 done

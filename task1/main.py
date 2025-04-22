@@ -10,7 +10,12 @@ import os
 
 
 # Prompt for the task
-PROMPT = "{formulation} Answer in YYYY/MM/DD, the news about this event are published on "
+PROMPT = """Answer in YYYY/MM/DD, on what date was the news about the following event published?
+---
+{formulation} 
+
+Answer: """
+N_ICL_EXAMPLES = 5
 
 # Load model and tokenizer with model parallelism using device_map
 def load_model_and_tokenizer(model_name):
@@ -61,11 +66,14 @@ def predict_date(model, tokenizer, text):
     return [int(p) for p in pred_date.split('/')]
 
 
-def test_model_on_dataset(model_name, dataset, output_file=None):
+def test_model_on_dataset(model_name, dataset, args):
     tokenizer, model = load_model_and_tokenizer(model_name)
 
-    if output_file is None:
-        output_file = f"{model_name.replace('/', '_')}_results.csv"
+    if args.output_file is None:
+        output_file = os.path.join(args.output_dir, f"{model_name.replace('/', '_')}{'_icl' if args.icl else ''}_results.csv")
+        os.makedirs(args.output_dir, exist_ok=True)
+    else:
+        output_file = args.output_file
 
     # Create CSV file with headers
     with open(output_file, mode="w", newline="") as file:
@@ -103,7 +111,6 @@ def test_model_on_dataset(model_name, dataset, output_file=None):
                 logprobs = []
                 if not formulation.endswith("."):
                     formulation = formulation + "."
-                PROMPT = "{formulation} Answer in YYYY/MM/DD, the news about this event are published in "
                 input_text = PROMPT.format(formulation=formulation)
                 year, month, day = predict_date(model, tokenizer, input_text)
 
@@ -182,6 +189,22 @@ def calculate_accuracy(output_file):
     
     return y_accuracy, ym_accuracy, ymd_accuracy, ymd3_accuracy, ymd5_accuracy, ymd10_accuracy
 
+def enable_icl(dataset):
+    global PROMPT
+    # Enable in-context learning (ICL) by adding few-shot examples
+    dataset = dataset.shuffle(seed=0)
+    examples = dataset.take(N_ICL_EXAMPLES)
+    s = PROMPT.split('\n')[0] + "\n---\n"
+    for example in examples:
+        s += f'{example["formulation_1"]}\n\n'
+        s += f'Answer: {example["year"]}/{example["month"]:02}/{example["day"]:02}\n'
+        s += "---\n"
+
+    PROMPT = s + '\n'.join(PROMPT.split('\n')[2:])
+
+    # remove the examples from the dataset
+    return dataset.skip(N_ICL_EXAMPLES)
+
 def main():
     # Parse command-line arguments
     parser = argparse.ArgumentParser()
@@ -195,7 +218,16 @@ def main():
         help="Path to your result CSV file, if provided, the script will not test model again", 
     )
     parser.add_argument(
+        "--output_dir",
+        type=str,
+        default='results',
+        help="Default directory to save the result CSV files. Would be ignore if output_file is provided",
+    )
+    parser.add_argument(
         "--subset", action="store_true", help="Use a subset of 100 samples for testing"
+    )
+    parser.add_argument(
+        "--icl", action="store_true", help="Use in-context learning prompt"
     )
     args = parser.parse_args()
 
@@ -208,7 +240,9 @@ def main():
         dataset = load_dataset("hereldav/TimeAware", split="train")
         if args.subset:
             dataset = dataset.shuffle(seed=0).take(100)
-        output_file = test_model_on_dataset(args.model_name, dataset, args.output_file)
+        if args.icl:
+            dataset = enable_icl(dataset)
+        output_file = test_model_on_dataset(args.model_name, dataset, args)
     else:
         raise ValueError("If no result file exists, you must specify --model_name to generate it")
 
