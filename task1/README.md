@@ -29,7 +29,7 @@ python main.py --output_file <path to results file>
 ```
 
 ### Results on full dataset
-| w/o ICL / w/ ICL     | Qwen/Qwen2.5-3B | Qwen/Qwen2.5-3B-Instruct | meta-llama/Llama-3.2-3B | meta-llama/Llama-3.2-3B-Instruct | google/gemma-2-2b | google/gemma-2-2b-it |
+| Zero-shot/ICL     | Qwen/Qwen2.5-3B | Qwen/Qwen2.5-3B-Instruct | meta-llama/Llama-3.2-3B | meta-llama/Llama-3.2-3B-Instruct | google/gemma-2-2b | google/gemma-2-2b-it |
 |---------------------------------|------------------|---------------------------|--------------------------|----------------------------------|--------------------|------------------------|
 | Year Accuracy                   | 36.51/39.05          | 30.89/37.04                    | 0.05/11.52                    | 10.36/3.09                           | 41.21/49.34             | 35.26/46.66                 |
 | Year Month Accuracy             | 10.55/12.41          | 8.47/10.46                     | 0.00/0.55                    | 1.78/0.16                            | 15.05/19.15             | 12.34/16.63                 |
