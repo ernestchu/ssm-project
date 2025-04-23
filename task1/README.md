@@ -38,54 +38,51 @@ python main.py --output_file <path to results file>
 | Year Month Day +/- 5 Accuracy  | 5.92%            | 4.79%                     | 0.00%                    | 0.50%                            | 8.47%              | 6.11%                  |
 | Year Month Day +/- 10 Accuracy | 8.10%            | 6.50%                     | 0.00%                    | 0.97%                            | 11.40%             | 8.62%                  |
 
-```
 === Model: Qwen/Qwen2.5-3B ===
 ----------------------------------------
-Year Accuracy: 36.51%
-Year Month Accuracy: 10.55%
-Year Month Day Accuracy: 2.07%
-Year Month Day +/- 3 Accuracy: 4.70%
-Year Month Day +/- 5 Accuracy: 5.92%
-Year Month Day +/- 10 Accuracy: 8.10%
+Year Accuracy: 39.05%
+Year Month Accuracy: 12.41%
+Year Month Day Accuracy: 2.94%
+Year Month Day +/- 3 Accuracy: 5.86%
+Year Month Day +/- 5 Accuracy: 7.32%
+Year Month Day +/- 10 Accuracy: 9.56%
 === Model: Qwen/Qwen2.5-3B-Instruct ===
 ----------------------------------------
-Year Accuracy: 30.89%
-Year Month Accuracy: 8.47%
-Year Month Day Accuracy: 1.56%
-Year Month Day +/- 3 Accuracy: 3.98%
-Year Month Day +/- 5 Accuracy: 4.79%
-Year Month Day +/- 10 Accuracy: 6.50%
+Year Accuracy: 37.04%
+Year Month Accuracy: 10.46%
+Year Month Day Accuracy: 2.60%
+Year Month Day +/- 3 Accuracy: 5.30%
+Year Month Day +/- 5 Accuracy: 6.43%
+Year Month Day +/- 10 Accuracy: 8.35%
 === Model: meta-llama/Llama-3.2-3B ===
 ----------------------------------------
-Year Accuracy: 0.05%
-Year Month Accuracy: 0.00%
-Year Month Day Accuracy: 0.00%
-Year Month Day +/- 3 Accuracy: 0.00%
-Year Month Day +/- 5 Accuracy: 0.00%
-Year Month Day +/- 10 Accuracy: 0.00%
+Year Accuracy: 11.52%
+Year Month Accuracy: 0.55%
+Year Month Day Accuracy: 0.04%
+Year Month Day +/- 3 Accuracy: 0.11%
+Year Month Day +/- 5 Accuracy: 0.12%
+Year Month Day +/- 10 Accuracy: 0.29%
 === Model: meta-llama/Llama-3.2-3B-Instruct ===
 ----------------------------------------
-Year Accuracy: 10.36%
-Year Month Accuracy: 1.78%
-Year Month Day Accuracy: 0.01%
-Year Month Day +/- 3 Accuracy: 0.35%
-Year Month Day +/- 5 Accuracy: 0.50%
-Year Month Day +/- 10 Accuracy: 0.97%
+Year Accuracy: 3.09%
+Year Month Accuracy: 0.16%
+Year Month Day Accuracy: 0.02%
+Year Month Day +/- 3 Accuracy: 0.02%
+Year Month Day +/- 5 Accuracy: 0.04%
+Year Month Day +/- 10 Accuracy: 0.06%
 === Model: google/gemma-2-2b ===
 ----------------------------------------
-Year Accuracy: 41.21%
-Year Month Accuracy: 15.05%
-Year Month Day Accuracy: 3.39%
-Year Month Day +/- 3 Accuracy: 7.21%
-Year Month Day +/- 5 Accuracy: 8.47%
-Year Month Day +/- 10 Accuracy: 11.40%
+Year Accuracy: 49.34%
+Year Month Accuracy: 19.15%
+Year Month Day Accuracy: 7.14%
+Year Month Day +/- 3 Accuracy: 11.52%
+Year Month Day +/- 5 Accuracy: 12.80%
+Year Month Day +/- 10 Accuracy: 15.65%
 === Model: google/gemma-2-2b-it ===
 ----------------------------------------
-Year Accuracy: 35.26%
-Year Month Accuracy: 12.34%
-Year Month Day Accuracy: 1.22%
-Year Month Day +/- 3 Accuracy: 4.50%
-Year Month Day +/- 5 Accuracy: 6.11%
-Year Month Day +/- 10 Accuracy: 8.62%
-```
-
+Year Accuracy: 46.66%
+Year Month Accuracy: 16.63%
+Year Month Day Accuracy: 4.78%
+Year Month Day +/- 3 Accuracy: 8.96%
+Year Month Day +/- 5 Accuracy: 10.38%
+Year Month Day +/- 10 Accuracy: 12.96%
