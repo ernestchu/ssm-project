@@ -78,9 +78,10 @@ def cal_acc(file_path,model_name):
             correct += 1
         i['llm_answer'] = response.output_text
         new_data.append(i)
+        with open(new_file_path, 'w', encoding='utf-8') as f:
+            json.dump(new_data, f, ensure_ascii=False, indent=2)
     
-    with open(new_file_path, 'w', encoding='utf-8') as f:
-        json.dump(new_data, f, ensure_ascii=False, indent=2)
+
     print(f'Accuracy: {correct/num}')
 
 
