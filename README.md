@@ -7,6 +7,7 @@
 |Gemma-2 2B|https://huggingface.co/google/gemma-2-2b|https://huggingface.co/google/gemma-2-2b-it|
 
 ### TODO list
+- [ ] Consider the knowledge [cutoff date](https://github.com/HaoooWang/llm-knowledge-cutoff-dates)
 - [ ] Task 1 (assignee: Ernie)
 - [ ] Task 2
   - [ ] Generate QA pairs using GPT4o  (assignee: Junhyeok)
