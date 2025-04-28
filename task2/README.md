@@ -20,8 +20,8 @@ We aim to systematically assess the alignment between the large model's response
 
 |model|accuracy|
 |-|-|
-|Qwen/Qwen2.5-3B||
-|Qwen/Qwen2.5-3B-Instruct||
+|Qwen/Qwen2.5-3B|0.3596|
+|Qwen/Qwen2.5-3B-Instruct|0.3028|
 |meta-llama/Llama-3.2-3B|48.32|
 |meta-llama/Llama-3.2-3B-Instruct||
 |google/gemma-2-2b|23.72|
