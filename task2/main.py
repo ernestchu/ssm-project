@@ -65,10 +65,17 @@ def cal_acc(file_path,model_name):
 
     num = 0 
     correct = 0
-    new_data = []
-    for i in tqdm(data):
 
+    if os.path.exists(new_file_path):
+        new_data = json.load(open(new_file_path, 'r'))
+    else:
+        new_data = []
+    for index,i in enumerate(tqdm(data)):
+        if i['formulation'] in [j['formulation'] for j in new_data]:
+
+            continue
         prompt = f"The event is {i['formulation']}\n\nAnswer: {i['answer']}\n\nIs the event aligned with the answer? Please answer with 'yes' or 'no'\n\n"   
+        import pdb; pdb.set_trace()
         response = client.responses.create(
             model="gpt-4o-mini",
             input=prompt
