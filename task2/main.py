@@ -75,7 +75,6 @@ def cal_acc(file_path,model_name):
 
             continue
         prompt = f"The event is {i['formulation']}\n\nAnswer: {i['answer']}\n\nIs the event aligned with the answer? Please answer with 'yes' or 'no'\n\n"   
-        import pdb; pdb.set_trace()
         response = client.responses.create(
             model="gpt-4o-mini",
             input=prompt
