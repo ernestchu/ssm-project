@@ -22,9 +22,9 @@ We aim to systematically assess the alignment between the large model's response
 |-|-|
 |Qwen/Qwen2.5-3B||
 |Qwen/Qwen2.5-3B-Instruct||
-|meta-llama/Llama-3.2-3B||
+|meta-llama/Llama-3.2-3B|48.32|
 |meta-llama/Llama-3.2-3B-Instruct||
-|google/gemma-2-2b||
+|google/gemma-2-2b|23.72|
 |google/gemma-2-2b-it||
 
 ## next step
