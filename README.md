@@ -1,10 +1,31 @@
 # ssm-project
 
+### Tiny standard (old) model
 |Model|Base|Instruct|
 |-|-|-|
-|Qwen-2.5 3B|https://huggingface.co/Qwen/Qwen2.5-3B|https://huggingface.co/Qwen/Qwen2.5-3B-Instruct|
-|Llama-3.2 3B|https://huggingface.co/meta-llama/Llama-3.2-3B|https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct|
-|Gemma-2 2B|https://huggingface.co/google/gemma-2-2b|https://huggingface.co/google/gemma-2-2b-it|
+|Qwen-2.5 3B|[Qwen/Qwen2.5-3B](https://huggingface.co/Qwen/Qwen2.5-3B)|[Qwen2.5-3B-Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct)|
+|Llama-3.2 3B|[meta-llama/Llama-3.2-3B](https://huggingface.co/meta-llama/Llama-3.2-3B)|[meta-llama/Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct)|
+|Gemma-2 2B|[google/gemma-2-2b](https://huggingface.co/google/gemma-2-2b)|[google/gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it)|
+
+### Small standard (old) model
+|Model|Base|Instruct|
+|-|-|-|
+|Qwen-2.5 7B|[Qwen/Qwen2.5-7B](https://huggingface.co/Qwen/Qwen2.5-7B)|[Qwen/Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct)|
+|Llama-3.1 8B|[meta-llama/Llama-3.1-8B](https://huggingface.co/meta-llama/Llama-3.1-8B)|[meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct)|
+|Gemma-2 9B|[google/gemma-2-9b](https://huggingface.co/google/gemma-2-9b)|[google/gemma-2-9b-it](https://huggingface.co/google/gemma-2-9b-it)|
+
+
+### Tiny Latest model
+|Model|Base|Instruct|
+|-|-|-|
+|Qwen-3 4B|[Qwen/Qwen3-4B-Base](https://huggingface.co/Qwen/Qwen3-4B-Base)|[Qwen/Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B)|
+|Gemma-3 4B|[google/gemma-3-4b-pt](https://huggingface.co/google/gemma-3-4b-pt)|[google/gemma-3-4b-it](https://huggingface.co/google/gemma-3-4b-it)|
+
+### Small Latest model
+|Model|Base|Instruct|
+|-|-|-|
+|Qwen-3 14B|[Qwen/Qwen3-14B-Base](https://huggingface.co/Qwen/Qwen3-14B-Base)|[Qwen/Qwen3-14B](https://huggingface.co/Qwen/Qwen3-14B)|
+|Gemma-2 12B|[google/gemma-3-12b-pt](https://huggingface.co/google/gemma-3-12b-pt)|[google/gemma-3-12b-it](https://huggingface.co/google/gemma-3-12b-it)|
 
 ### TODO list
 - [ ] Consider the knowledge [cutoff date](https://github.com/HaoooWang/llm-knowledge-cutoff-dates)
