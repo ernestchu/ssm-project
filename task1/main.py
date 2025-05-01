@@ -63,7 +63,7 @@ def predict_date(model, tokenizer, text):
 
     pred_date = tokenizer.batch_decode(inputs["input_ids"])[0][-10:]
 
-    return [int(p) for p in pred_date.split('/')]
+    return map(int, pred_date.split("/"))
 
 
 def test_model_on_dataset(model_name, dataset, args):
@@ -97,6 +97,14 @@ def test_model_on_dataset(model_name, dataset, args):
         for index, row in tqdm(
             enumerate(dataset), total=len(dataset), desc="Processing events"
         ):
+            if args.cutoff_date is not None:
+                c_year, c_month, c_day = map(int, args.cutoff_date.split("/"))
+                if (
+                    row["year"] > c_year
+                    or (row["year"] == c_year and row["month"] > c_month)
+                    or (row["year"] == c_year and row["month"] == c_month and row["day"] > c_day)
+                ):
+                    continue
             category = row["category"]  # Category column
 
             formulations = {
@@ -210,6 +218,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--model_name", type=str, help="The Hugging Face model name, required if you want to test the model"
+    )
+    parser.add_argument(
+        "--cutoff_date",
+        type=str,
+        default=None,
+        help="Model knowledge cutoff date in YYYY/MM/DD format",
     )
     parser.add_argument(
         "--output_file",
