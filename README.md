@@ -1,31 +1,37 @@
 # ssm-project
 
+## List of models
+- [Tiny standard (old) model](#tiny-standard-old-model)
+- [Small standard (old) model](#small-standard-old-model)
+- [Tiny Latest model](#tiny-latest-model)
+- [Small Latest model](#small-latest-model)
+
 ### Tiny standard (old) model
-|Model|Base|Instruct|
-|-|-|-|
-|Qwen-2.5 3B|[Qwen/Qwen2.5-3B](https://huggingface.co/Qwen/Qwen2.5-3B)|[Qwen2.5-3B-Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct)|
-|Llama-3.2 3B|[meta-llama/Llama-3.2-3B](https://huggingface.co/meta-llama/Llama-3.2-3B)|[meta-llama/Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct)|
-|Gemma-2 2B|[google/gemma-2-2b](https://huggingface.co/google/gemma-2-2b)|[google/gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it)|
+|Model|Base|Instruct|Cut-off Date|
+|-|-|-|-|
+|Qwen-2.5 3B|[Qwen/Qwen2.5-3B](https://huggingface.co/Qwen/Qwen2.5-3B)|[Qwen2.5-3B-Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct)|2023/12|
+|Llama-3.2 3B|[meta-llama/Llama-3.2-3B](https://huggingface.co/meta-llama/Llama-3.2-3B)|[meta-llama/Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct)|2023/12|
+|Gemma-2 2B|[google/gemma-2-2b](https://huggingface.co/google/gemma-2-2b)|[google/gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it)|2024/6|
 
 ### Small standard (old) model
-|Model|Base|Instruct|
-|-|-|-|
-|Qwen-2.5 7B|[Qwen/Qwen2.5-7B](https://huggingface.co/Qwen/Qwen2.5-7B)|[Qwen/Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct)|
-|Llama-3.1 8B|[meta-llama/Llama-3.1-8B](https://huggingface.co/meta-llama/Llama-3.1-8B)|[meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct)|
-|Gemma-2 9B|[google/gemma-2-9b](https://huggingface.co/google/gemma-2-9b)|[google/gemma-2-9b-it](https://huggingface.co/google/gemma-2-9b-it)|
+|Model|Base|Instruct|Cut-off Date|
+|-|-|-|-|
+|Qwen-2.5 7B|[Qwen/Qwen2.5-7B](https://huggingface.co/Qwen/Qwen2.5-7B)|[Qwen/Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct)|2023/12|
+|Llama-3.1 8B|[meta-llama/Llama-3.1-8B](https://huggingface.co/meta-llama/Llama-3.1-8B)|[meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct)|2023/12|
+|Gemma-2 9B|[google/gemma-2-9b](https://huggingface.co/google/gemma-2-9b)|[google/gemma-2-9b-it](https://huggingface.co/google/gemma-2-9b-it)|2024/6|
 
 
 ### Tiny Latest model
-|Model|Base|Instruct|
-|-|-|-|
-|Qwen-3 4B|[Qwen/Qwen3-4B-Base](https://huggingface.co/Qwen/Qwen3-4B-Base)|[Qwen/Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B)|
-|Gemma-3 4B|[google/gemma-3-4b-pt](https://huggingface.co/google/gemma-3-4b-pt)|[google/gemma-3-4b-it](https://huggingface.co/google/gemma-3-4b-it)|
+|Model|Base|Instruct|Cut-off Date|
+|-|-|-|-|
+|Qwen-3 4B|[Qwen/Qwen3-4B-Base](https://huggingface.co/Qwen/Qwen3-4B-Base)|[Qwen/Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B)|2024/3|
+|Gemma-3 4B|[google/gemma-3-4b-pt](https://huggingface.co/google/gemma-3-4b-pt)|[google/gemma-3-4b-it](https://huggingface.co/google/gemma-3-4b-it)|2024/8|
 
 ### Small Latest model
-|Model|Base|Instruct|
-|-|-|-|
-|Qwen-3 14B|[Qwen/Qwen3-14B-Base](https://huggingface.co/Qwen/Qwen3-14B-Base)|[Qwen/Qwen3-14B](https://huggingface.co/Qwen/Qwen3-14B)|
-|Gemma-2 12B|[google/gemma-3-12b-pt](https://huggingface.co/google/gemma-3-12b-pt)|[google/gemma-3-12b-it](https://huggingface.co/google/gemma-3-12b-it)|
+|Model|Base|Instruct|Cut-off Date|
+|-|-|-|-|
+|Qwen-3 14B|[Qwen/Qwen3-14B-Base](https://huggingface.co/Qwen/Qwen3-14B-Base)|[Qwen/Qwen3-14B](https://huggingface.co/Qwen/Qwen3-14B)|2024/3|
+|Gemma-2 12B|[google/gemma-3-12b-pt](https://huggingface.co/google/gemma-3-12b-pt)|[google/gemma-3-12b-it](https://huggingface.co/google/gemma-3-12b-it)|2024/8|
 
 ### TODO list
 - [ ] Consider the knowledge [cutoff date](https://github.com/HaoooWang/llm-knowledge-cutoff-dates)
