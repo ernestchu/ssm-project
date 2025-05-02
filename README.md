@@ -5,7 +5,9 @@
 - [Small standard (old) model](#small-standard-old-model)
 - [Tiny Latest model](#tiny-latest-model)
 - [Small Latest model](#small-latest-model)
+<!--
 - [Closed-sourced API](#closed-sourced-api)
+-->
 
 ### Tiny standard (old) model
 |Model|Base|Instruct|Cut-off Date|
@@ -34,13 +36,14 @@
 |Qwen-3 14B|[Qwen/Qwen3-14B-Base](https://huggingface.co/Qwen/Qwen3-14B-Base)|[Qwen/Qwen3-14B](https://huggingface.co/Qwen/Qwen3-14B)|2024/03/01|
 |Gemma-2 12B|[google/gemma-3-12b-pt](https://huggingface.co/google/gemma-3-12b-pt)|[google/gemma-3-12b-it](https://huggingface.co/google/gemma-3-12b-it)|2024/08/01|
 
+<!--
 ### Closed-Sourced API
 |Vendor|Model|Cut-off Date|
 |-|-|-|
 |OpenAI|[gpt-4.1-nano-2025-04-14](https://platform.openai.com/docs/models/gpt-4.1-nano)|2024/05/31|
 |Google|[gemini-2.0-flash-lite-001](https://ai.google.dev/gemini-api/docs/models#gemini-2.0-flash-lite)|2024/08/01|
-|xAI|[grok-3-mini-beta](https://docs.x.ai/docs/models#models-and-pricing)|2024/11/17|
 |Antropic|[claude-3-5-haiku-20241022](https://docs.anthropic.com/en/docs/about-claude/models/all-models#model-comparison-table)|2024/07/01|
+-->
 
 ### TODO list
 - [ ] Consider the knowledge [cutoff date](https://github.com/HaoooWang/llm-knowledge-cutoff-dates)
