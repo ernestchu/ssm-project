@@ -39,7 +39,6 @@
 |-|-|-|
 |OpenAI|[gpt-4.1-nano-2025-04-14](https://platform.openai.com/docs/models/gpt-4.1-nano)|2024/05/31|
 |Google|[gemini-2.0-flash-lite-001](https://ai.google.dev/gemini-api/docs/models#gemini-2.0-flash-lite)|2024/08/01|
-|xAI|[grok-3-mini-beta](https://docs.x.ai/docs/models#models-and-pricing)|2024/11/17|
 |Antropic|[claude-3-5-haiku-20241022](https://docs.anthropic.com/en/docs/about-claude/models/all-models#model-comparison-table)|2024/07/01|
 
 ### TODO list
