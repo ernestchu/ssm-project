@@ -17,8 +17,9 @@ def load_model_and_tokenizer(model_name,cache_dir=None):
     # Use device_map to shard the model across multiple GPUs
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
+        device_map='auto',
         trust_remote_code=True,
-    ).to("cuda:0").eval()
+    ).eval()
     return tokenizer, model
 
 
@@ -31,30 +32,40 @@ def load_data(subset=False):
         formulations = formulations[:100]
     return questions,formulations
 
-def generate_answers(model, tokenizer, questions, formulations, output_path="answers.json"):
+
+def generate_answers(model, tokenizer, questions, formulations, output_path="answers.json", context_prompt=None):
     results = []
     for index, question in enumerate(tqdm(questions)):
-        prompt = f"Answer this question with only one sentence: {question}. You should only give the answer in one single sentence with no more than 100 words."
-        inputs = tokenizer(question, return_tensors="pt").to("cuda")
-        outputs = model.generate(**inputs, max_new_tokens=250)
-
-        full_answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-        if full_answer.startswith(question):
-            answer = full_answer[len(question):].strip()
+        prompt = f"Answer this question with only one sentence: {question}. You should only give the answer in one single sentence with no more than 100 words.\n\n"
+        if context_prompt is not None:
+            full_prompt = prompt + "here are some exapmles:\n\n" + context_prompt + f"Q: {question}\nA:"
         else:
-            answer = full_answer.strip()
+            full_prompt = prompt + f"Q: {question}\nA:"
+        inputs = tokenizer(full_prompt, return_tensors="pt").to("cuda")
+        outputs = model.generate(**inputs, max_new_tokens=200)
+        output_ids = [o[len(i):] for i, o in zip(inputs.input_ids, outputs)]
+        full_answer = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
+
+        #full_answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        # if full_answer.startswith(full_prompt):
+        #     answer = full_answer[len(full_prompt):].strip()
+        # else:
+        #     answer = full_answer.strip()
+        
+        answer = full_answer.split('\n\nQ:')[0]
         result = {
             "formulation": formulations[index],
             "answer": answer
         }
+        
         results.append(result)
 
-    # 保存为 JSON 文件
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 
     return results
+
 
 def cal_acc(file_path,model_name):
     file = open(file_path, 'r')
@@ -91,6 +102,27 @@ def cal_acc(file_path,model_name):
     print(f'Accuracy: {correct/num}')
 
 
+import random
+
+def enable_icl_for_qa(questions, formulations, n_examples=5, seed=42):
+
+    paired = list(zip(questions, formulations))
+    random.seed(seed)
+    random.shuffle(paired)
+
+    examples = paired[:n_examples]
+    test_data = paired[n_examples:]
+
+    context_prompt = ""
+    for q, f in examples:
+        context_prompt += f"Q: {q}\nA: {f}\n\n"
+
+    test_questions, test_formulations = zip(*test_data) if test_data else ([], [])
+    
+    return context_prompt, list(test_questions), list(test_formulations)
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -102,13 +134,26 @@ if __name__ == '__main__':
     parser.add_argument(
         "--eval", action="store_true", help="evaluate the acc for the models"
     )
+    parser.add_argument(
+        "--icl", action="store_true", help="Use in-context learning prompt"
+    )
     args = parser.parse_args()
-    print("Evaluating model's accuracy")
     if args.eval:
+        print("Evaluating model's accuracy")
         #tokenizer, model = load_model_and_tokenizer(args.model_name)
-
         cal_acc(f"{args.model_name.split('/')[-1]}_answers.json",args.model_name)
+
     else:
         tokenizer, model = load_model_and_tokenizer(args.model_name)
-        questions,formulations = load_data(args.subset)
-        answers = generate_answers(model, tokenizer, questions,formulations,f"{args.model_name.split('/')[-1]}_answers.json")
+        questions, formulations = load_data(args.subset)
+        
+        if args.icl:
+            context_prompt, questions, formulations = enable_icl_for_qa(questions, formulations)
+            answers = generate_answers(model, tokenizer, questions, formulations,
+                                   output_path=f"{args.model_name.split('/')[-1]}_answers.json",
+                                   context_prompt=context_prompt)
+        else:
+            answers = generate_answers(model, tokenizer, questions, formulations,
+                                   output_path=f"{args.model_name.split('/')[-1]}_answers_ICL.json")
+
+

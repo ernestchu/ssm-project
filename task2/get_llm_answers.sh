@@ -2,7 +2,7 @@
 
 MODELS=(
   "Qwen/Qwen2.5-3B"
-  # "Qwen/Qwen2.5-3B-Instruct"
+  "Qwen/Qwen2.5-3B-Instruct"
   "meta-llama/Llama-3.2-3B"
   "meta-llama/Llama-3.2-3B-Instruct"
   "google/gemma-2-2b"
