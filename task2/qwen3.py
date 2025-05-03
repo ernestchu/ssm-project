@@ -13,7 +13,7 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 
 
-prompt = "Give me a short introduction to large language model."
+prompt = "Give me a short introduction to large language model.\n\n"
 messages = [
     {"role": "user", "content": prompt}
 ]
@@ -21,8 +21,9 @@ text = tokenizer.apply_chat_template(
     messages,
     tokenize=False,
     add_generation_prompt=True,
-    enable_thinking=True # Switches between thinking and non-thinking modes. Default is True.
+    enable_thinking=False # Switches between thinking and non-thinking modes. Default is True.
 )
+
 model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
 
 # conduct text completion

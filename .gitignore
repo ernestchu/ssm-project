@@ -2,3 +2,4 @@
 *.csv
 *.ipynb
 *.slurm
+task2/download.py
