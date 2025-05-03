@@ -213,7 +213,39 @@ def enable_icl(dataset):
     # remove the examples from the dataset
     return dataset.skip(N_ICL_EXAMPLES)
 
-def main():
+def main(args):
+    if not args.model_name and not args.output_file:
+        raise ValueError("You must provide either --model_name or __output_file")
+
+    if args.output_file and os.path.exists(args.output_file): 
+        output_file = args.output_file
+    elif args.model_name:
+        dataset = load_dataset("hereldav/TimeAware", split="train")
+        if args.subset:
+            dataset = dataset.shuffle(seed=0).take(100)
+        if args.icl:
+            dataset = enable_icl(dataset)
+        output_file = test_model_on_dataset(args.model_name, dataset, args)
+    else:
+        raise ValueError("If no result file exists, you must specify --model_name to generate it")
+
+    # calculate accuracy and stability
+    y_accuracy, ym_accuracy, ymd_accuracy, ymd3_accuracy, ymd5_accuracy, ymd10_accuracy = calculate_accuracy(output_file)
+    print("-" * 40)
+    print(f"Year Accuracy: {y_accuracy:.2%}")
+    print(f"Year Month Accuracy: {ym_accuracy:.2%}")
+    print(f"Year Month Day Accuracy: {ymd_accuracy:.2%}")
+    print(f"Year Month Day +/- 3 Accuracy: {ymd3_accuracy:.2%}")
+    print(f"Year Month Day +/- 5 Accuracy: {ymd5_accuracy:.2%}")
+    print(f"Year Month Day +/- 10 Accuracy: {ymd10_accuracy:.2%}")
+
+    return [output_file, y_accuracy, ym_accuracy, ymd_accuracy, ymd3_accuracy, ymd5_accuracy, ymd10_accuracy]
+
+    # stability = calculate_stability(output_file)
+    # print(f"Stability: {stability:.2%}")
+    # print("-" * 40)
+
+def get_argparser():
     # Parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -243,36 +275,7 @@ def main():
     parser.add_argument(
         "--icl", action="store_true", help="Use in-context learning prompt"
     )
-    args = parser.parse_args()
-
-    if not args.model_name and not args.output_file:
-        raise ValueError("You must provide either --model_name or __output_file")
-
-    if args.output_file and os.path.exists(args.output_file): 
-        output_file = args.output_file
-    elif args.model_name:
-        dataset = load_dataset("hereldav/TimeAware", split="train")
-        if args.subset:
-            dataset = dataset.shuffle(seed=0).take(100)
-        if args.icl:
-            dataset = enable_icl(dataset)
-        output_file = test_model_on_dataset(args.model_name, dataset, args)
-    else:
-        raise ValueError("If no result file exists, you must specify --model_name to generate it")
-
-    # calculate accuracy and stability
-    y_accuracy, ym_accuracy, ymd_accuracy, ymd3_accuracy, ymd5_accuracy, ymd10_accuracy = calculate_accuracy(output_file)
-    print("-" * 40)
-    print(f"Year Accuracy: {y_accuracy:.2%}")
-    print(f"Year Month Accuracy: {ym_accuracy:.2%}")
-    print(f"Year Month Day Accuracy: {ymd_accuracy:.2%}")
-    print(f"Year Month Day +/- 3 Accuracy: {ymd3_accuracy:.2%}")
-    print(f"Year Month Day +/- 5 Accuracy: {ymd5_accuracy:.2%}")
-    print(f"Year Month Day +/- 10 Accuracy: {ymd10_accuracy:.2%}")
-
-    # stability = calculate_stability(output_file)
-    # print(f"Stability: {stability:.2%}")
-    # print("-" * 40)
+    return parser
 
 if __name__ == "__main__":
-    main()
+    main(get_argparser().parse_args())

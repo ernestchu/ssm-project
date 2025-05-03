@@ -1,14 +1,14 @@
 #!/usr/bin/bash
 
 MODELS=(
-  "Qwen/Qwen2.5-3B"
-  "Qwen/Qwen2.5-3B-Instruct"
-  "meta-llama/Llama-3.2-3B"
-  "meta-llama/Llama-3.2-3B-Instruct"
-  "google/gemma-2-2b"
-  "google/gemma-2-2b-it"
-  "Qwen/Qwen2.5-7B"
-  "Qwen/Qwen2.5-7B-Instruct"
+  # "Qwen/Qwen2.5-3B"
+  # "Qwen/Qwen2.5-3B-Instruct"
+  # "meta-llama/Llama-3.2-3B"
+  # "meta-llama/Llama-3.2-3B-Instruct"
+  # "google/gemma-2-2b"
+  # "google/gemma-2-2b-it"
+  # "Qwen/Qwen2.5-7B"
+  # "Qwen/Qwen2.5-7B-Instruct"
   "meta-llama/Llama-3.1-8B"
   "meta-llama/Llama-3.1-8B-Instruct"
   "google/gemma-2-9b"
@@ -22,6 +22,7 @@ MODELS=(
   "google/gemma-3-12b-pt"
   "google/gemma-3-12b-it"
 )
+
 CUTOFF_DATES=(
   "2023/12/01"
   "2023/12/01"
