@@ -1,10 +1,10 @@
 #!/usr/bin/bash
-export CUDA_VISIBLE_DEVICES=3
+export CUDA_VISIBLE_DEVICES=0,1
 MODELS=(
-  "google/gemma-3-4b-pt"
-  "google/gemma-3-4b-it"
-  # "google/gemma-3-12b-pt"
-  # "google/gemma-3-12b-it"
+  # "google/gemma-3-4b-pt"
+  # "google/gemma-3-4b-it"
+  "google/gemma-3-12b-pt"
+  "google/gemma-3-12b-it"
 )
 CUTOFF_DATES=(
   "2024/08/01"

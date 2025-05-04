@@ -106,8 +106,9 @@ def cal_acc_Qwen(file_path):
         outputs = outputs_data.sequences
         scores = outputs_data.scores
 
-        score_yes = scores[0][0,tokenizer.encode('yes')[0]]
-        score_no = scores[0][0,tokenizer.encode('no')[0]]
+        score_yes = scores[0][0,tokenizer.encode('yes')[0]] + scores[0][0,tokenizer.encode('Yes')[0]]
+        score_no = scores[0][0,tokenizer.encode('no')[0]] + scores[0][0,tokenizer.encode('No')[0]]
+
         prob = torch.softmax(torch.tensor([score_yes, score_no]), dim=0)
         output_ids = [o[len(i):] for i, o in zip(inputs.input_ids, outputs)]
         full_answer = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
@@ -198,7 +199,7 @@ if __name__ == '__main__':
     if args.eval:
         print("Evaluating model's accuracy")
         #tokenizer, model = load_model_and_tokenizer(args.model_name)
-        if not args.icl:
+        if args.icl:
             cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers.json")
         else:
             cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers_ICL.json")
