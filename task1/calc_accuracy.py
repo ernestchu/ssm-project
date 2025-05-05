@@ -21,10 +21,10 @@ models = [
     ["google/gemma-3-4b-pt", "Gemma3-4B"],
     ["google/gemma-3-4b-it", "Gemma3-4B-it"],
     r'\midrule',
-    # ["Qwen/Qwen3-14B-Base", "Qwen3-14B"],
-    # ["Qwen/Qwen3-14B", "Qwen3-14B-it"],
-    # ["google/gemma-3-12b-pt", "Gemma3-12B"],
-    # ["google/gemma-3-12b-it", "Gemma3-12B-it"],
+    ["Qwen/Qwen3-14B-Base", "Qwen3-14B"],
+    ["Qwen/Qwen3-14B", "Qwen3-14B-it"],
+    ["google/gemma-3-12b-pt", "Gemma3-12B"],
+    ["google/gemma-3-12b-it", "Gemma3-12B-it"],
 ]
 
 table = ""
