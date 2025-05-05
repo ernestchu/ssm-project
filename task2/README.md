@@ -14,7 +14,7 @@ Call OpenAI API to test the result.
 python main.py --model_name Qwen/Qwen2.5-3B --eval 
 ```
 
-## results
+## GPT results
 
 We aim to systematically assess the alignment between the large model's responses and the corresponding formulations. For this evaluation, we employ GPT-4o-mini as the judgment model.
 
@@ -27,6 +27,13 @@ We aim to systematically assess the alignment between the large model's response
 |google/gemma-2-2b|23.72|
 |google/gemma-2-2b-it|41.86|
 
-## next step
+## Qwen3-14B resutls
 
-We will use some open source LLMs to test wheter the answer and formulation are aligned. 
+We aim to systematically assess the alignment between the large model's responses and the corresponding formulations. For this evaluation, we employ GPT-4o-mini as the judgment model.
+
+|model|normal accuracy|icl accuracy|
+|-|-|
+|Qwen/Qwen3-4B-Base|61.56|63.69|
+|Qwen/Qwen3-4B|76.67|80.00|
+|google/gemma-3-4b-pt|64.03|70.77|
+|google/gemma-3-4b-it|62.18|66.50|

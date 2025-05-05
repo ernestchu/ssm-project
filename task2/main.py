@@ -76,9 +76,9 @@ def generate_answers(model, tokenizer, questions, formulations, output_path="ans
 
     return results
 
-def cal_acc_Qwen(file_path):
-    cache_dir = '/export/fs05/dzhang98/models'
-    tokenizer,model = load_model_and_tokenizer("Qwen/Qwen3-14B",cache_dir=cache_dir)
+def cal_acc_Qwen(file_path,args):
+
+    tokenizer,model = load_model_and_tokenizer("Qwen/Qwen3-14B",cache_dir=args.cache_dir)
     file = open(file_path, 'r')
     data = json.load(file)
     new_file_path = file_path.replace('.json', f'_qwen.json')
@@ -182,9 +182,12 @@ def enable_icl_for_qa(questions, formulations, n_examples=5, seed=42):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    cache_dir = '/export/fs05/dzhang98/models'
+
     parser.add_argument(
         "--model_name", type=str, help="The Hugging Face model name, required if you want to test the model"
+    )
+    parser.add_argument(
+        "--cache_dir", type=str, help="cache directory for the model, optional"
     )
     parser.add_argument(
         "--subset", action="store_true", help="Use a subset of 30 samples for testing"
@@ -200,13 +203,13 @@ if __name__ == '__main__':
         print("Evaluating model's accuracy")
         #tokenizer, model = load_model_and_tokenizer(args.model_name)
         if args.icl:
-            cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers.json")
+            cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers.json",args)
         else:
-            cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers_ICL.json")
+            cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args)
 
 
     else:
-        tokenizer, model = load_model_and_tokenizer(args.model_name,cache_dir=cache_dir)
+        tokenizer, model = load_model_and_tokenizer(args.model_name,cache_dir=args.cache_dir)
         questions, formulations = load_data(args.subset)
         
         if args.icl:
