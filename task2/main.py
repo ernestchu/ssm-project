@@ -122,6 +122,52 @@ def cal_acc_Qwen(file_path,args):
             json.dump(new_data, f, ensure_ascii=False, indent=2)
     print(f'Accuracy: {correct/num}')
 
+def cal_acc_Gemma(file_path,args):
+
+    tokenizer,model = load_model_and_tokenizer("google/gemma-3-12b-pt",cache_dir=args.cache_dir)
+    file = open(file_path, 'r')
+    data = json.load(file)
+    new_file_path = file_path.replace('.json', f'_gemma.json')
+    num = 0 
+    correct = 0
+
+    if os.path.exists(new_file_path):
+        new_data = json.load(open(new_file_path, 'r'))
+    else:
+        new_data = []
+    for index,i in enumerate(tqdm(data)):
+        if i['formulation'] in [j['formulation'] for j in new_data]:
+            continue
+        prompt = f"The event is {i['formulation']}\n\nAnswer: {i['answer']}\n\nIs the event aligned with the answer? Please answer with 'true' or 'false'\n\n"   
+        inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+        outputs_data = model.generate(**inputs,
+                max_new_tokens=1,   
+                output_scores=True,
+                return_dict_in_generate=True,
+                top_p = 1,
+                top_k = 0,
+                temperature=1,
+                do_sample=True)
+        # yes 9693 no 2152
+        outputs = outputs_data.sequences
+        scores = outputs_data.scores
+
+        score_yes = scores[0][0,tokenizer.encode('True')[1]] + scores[0][0,tokenizer.encode('true')[1]]
+        score_no = scores[0][0,tokenizer.encode('False')[1]] + scores[0][0,tokenizer.encode('false')[1]]
+
+        prob = torch.softmax(torch.tensor([score_yes, score_no]), dim=0)
+        output_ids = [o[len(i):] for i, o in zip(inputs.input_ids, outputs)]
+        full_answer = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
+        num += 1
+        if prob[0] > prob[1]:
+            correct += 1
+        i['llm_answer'] = full_answer
+        i['prob'] = prob.tolist()
+        new_data.append(i)
+        with open(new_file_path, 'w', encoding='utf-8') as f:
+            json.dump(new_data, f, ensure_ascii=False, indent=2)
+    print(f'Accuracy: {correct/num}')
+
 
 
 def cal_acc_openai(file_path,model_name):
@@ -202,20 +248,20 @@ if __name__ == '__main__':
     if args.eval:
         print("Evaluating model's accuracy")
         #tokenizer, model = load_model_and_tokenizer(args.model_name)
-        if args.icl:
-            cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers.json",args)
+        if not args.icl:
+            cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_full.json",args)
         else:
-            cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args)
+            cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args)
 
 
     else:
         tokenizer, model = load_model_and_tokenizer(args.model_name,cache_dir=args.cache_dir)
         questions, formulations = load_data(args.subset)
         
-        if args.icl:
+        if not args.icl:
             context_prompt, questions, formulations = enable_icl_for_qa(questions, formulations)
             answers = generate_answers(model, tokenizer, questions, formulations,
-                                   output_path=f"{args.model_name.split('/')[-1]}_answers.json",
+                                   output_path=f"{args.model_name.split('/')[-1]}_answers_full.json",
                                    context_prompt=context_prompt)
         else:
             answers = generate_answers(model, tokenizer, questions, formulations,
