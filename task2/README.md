@@ -29,11 +29,14 @@ We aim to systematically assess the alignment between the large model's response
 
 ## Qwen3-14B resutls
 
-We aim to systematically assess the alignment between the large model's responses and the corresponding formulations. For this evaluation, we employ GPT-4o-mini as the judgment model.
 
-|model|normal accuracy|icl accuracy|
+|model|full accuracy|icl accuracy|
 |-|-|
 |Qwen/Qwen3-4B-Base|61.56|63.69|
-|Qwen/Qwen3-4B|76.67|80.00|
+|Qwen/Qwen3-4B|78.70|91.89|
 |google/gemma-3-4b-pt|64.03|70.77|
 |google/gemma-3-4b-it|62.18|66.50|
+|Qwen/Qwen3-14B-Base|76.57|77.42|
+|Qwen/Qwen3-14B|87.83|95.39|
+|google/gemma-3-12b-pt|80.98|81.66|
+|google/gemma-3-12b-it|79.63|78.60|

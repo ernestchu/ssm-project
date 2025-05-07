@@ -1,15 +1,16 @@
 #!/usr/bin/bash
+export CUDA_VISIBLE_DEVICES=0,1
 
 MODELS=(
-  "Qwen/Qwen3-4B-Base"
-  "Qwen/Qwen3-4B"
+  # "Qwen/Qwen3-4B-Base"
+  # "Qwen/Qwen3-4B"
   "Qwen/Qwen3-14B-Base"
-  "Qwen/Qwen3-14B"
+  # "Qwen/Qwen3-14B"
 )
 CUTOFF_DATES=(
-  "2024/03/01"
-  "2024/03/01"
-  "2024/03/01"
+  # "2024/03/01"
+  # "2024/03/01"
+  # "2024/03/01"
   "2024/03/01"
 )
 

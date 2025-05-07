@@ -187,7 +187,7 @@ if __name__ == '__main__':
         "--model_name", type=str, help="The Hugging Face model name, required if you want to test the model"
     )
     parser.add_argument(
-        "--cache_dir", type=str, help="cache directory for the model, optional"
+        "--cache_dir", type=str, default='/export/fs05/dzhang98/models',help="cache directory for the model, optional"
     )
     parser.add_argument(
         "--subset", action="store_true", help="Use a subset of 30 samples for testing"
