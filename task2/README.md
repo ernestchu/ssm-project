@@ -1,17 +1,45 @@
 # Task 2: Time-Conditioned Question Answering
 
 
-## quick start
+## Quick test
+
+You can use subset to test the data.
+```
+python main.py --model_name "your model name" --subset
+```
+
+## Generate answers
 
 
-Generate the LLMs' answer.
+Generate the LLMs' answer for full dataset.
 ```
-python main.py --model_name Qwen/Qwen2.5-3B
+python main.py --model_name "your model name" --cache_dir "your cache dir"
 ```
 
-Call OpenAI API to test the result.
+Generate the LLMs' answer for ICL test.
 ```
-python main.py --model_name Qwen/Qwen2.5-3B --eval 
+python main.py --model_name "your model name" --cache_dir "your cache dir" --icl
+```
+
+
+
+## Evaluate the model 
+
+We use open-source models to evaluate the results. Here are the commands.
+
+Call OpenAI API to evaluate the result.
+```
+python main.py --model_name "your model name" --eval --eval_method openai --cache_dir "your cache dir" [--icl]
+```
+
+Use Qwen to evaluate the result
+```
+python main.py --model_name "your model name" --eval --eval_method qwen --cache_dir "your cache dir" [--icl]
+```
+
+Use Gemma to evaluate the result
+```
+python main.py --model_name "your model name" --eval --eval_method gemma --cache_dir "your cache dir" [--icl]
 ```
 
 ## GPT results
@@ -41,7 +69,7 @@ We aim to systematically assess the alignment between the large model's response
 |google/gemma-3-12b-pt|80.98|81.66|
 |google/gemma-3-12b-it|79.63|78.60|
 
-# gemma3 12b results
+# Gemma3-12B results
 
 |model|full accuracy|icl accuracy|
 |-|-|-|
