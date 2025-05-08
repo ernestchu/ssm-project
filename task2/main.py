@@ -274,10 +274,10 @@ if __name__ == '__main__':
         if args.icl:
             context_prompt, questions, formulations = enable_icl_for_qa(questions, formulations)
             answers = generate_answers(model, tokenizer, questions, formulations,
-                                   output_path=f"{args.model_name.split('/')[-1]}_answers_full.json",
+                                   output_path=f"{args.model_name.split('/')[-1]}_answers_ICL.json",
                                    context_prompt=context_prompt)
         else:
             answers = generate_answers(model, tokenizer, questions, formulations,
-                                   output_path=f"{args.model_name.split('/')[-1]}_answers_ICL.json")
+                                   output_path=f"{args.model_name.split('/')[-1]}_answers_full.json")
 
 
