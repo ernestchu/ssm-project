@@ -11,6 +11,8 @@ MODELS=(
 
 # 2) Iterate over each entry and call your script
 for MODEL in "${MODELS[@]}"; do
-  echo "=== Model: $MODEL ==="
+  echo "=== Running with model: $MODEL  ==="
   python main.py --model_name "$MODEL"
+  echo "=== Running with model: $MODEL  with ICL ==="
+  python main.py --model_name "$MODEL" --icl
 done

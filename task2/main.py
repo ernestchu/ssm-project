@@ -27,6 +27,7 @@ def load_model_and_tokenizer(model_name,cache_dir=None):
             torch_dtype="auto",
             device_map='auto',
             trust_remote_code=True,
+            attn_implementation = "flash_attention_2",
             cache_dir=cache_dir
         ).eval()
     else:
@@ -35,6 +36,7 @@ def load_model_and_tokenizer(model_name,cache_dir=None):
             torch_dtype="auto",
             device_map='auto',
             trust_remote_code=True,
+            attn_implementation = "flash_attention_2",
         ).eval()
     return tokenizer, model
 
@@ -57,12 +59,23 @@ def generate_answers(model, tokenizer, questions, formulations, output_path="ans
             full_prompt = prompt + "here are some exapmles:\n\n" + context_prompt + f"Q: {question}\nA:"
         else:
             full_prompt = prompt + f"Q: {question}\nA:"
-
-        inputs = tokenizer(full_prompt, return_tensors="pt").to('cuda')
-        outputs = model.generate(**inputs, max_new_tokens=200)
+        if "Qwen3" in output_path:
+            messages = [
+                {"role": "user", "content": full_prompt}
+                ]
+            text = tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True,
+                    enable_thinking=False 
+                )
+            inputs = tokenizer(text, return_tensors="pt").to('cuda')
+        else:
+            inputs = tokenizer(full_prompt, return_tensors="pt").to('cuda')
+        outputs = model.generate(**inputs, max_new_tokens=100)
         output_ids = [o[len(i):] for i, o in zip(inputs.input_ids, outputs)]
         full_answer = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
-        
+
         answer = full_answer.split('\n\nQ:')[0]
         result = {
             "formulation": formulations[index],
