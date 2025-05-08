@@ -31,7 +31,7 @@ We aim to systematically assess the alignment between the large model's response
 
 
 |model|full accuracy|icl accuracy|
-|-|-|
+|-|-|-|
 |Qwen/Qwen3-4B-Base|61.56|63.69|
 |Qwen/Qwen3-4B|62.57|61.91|
 |google/gemma-3-4b-pt|64.03|70.77|
@@ -44,7 +44,7 @@ We aim to systematically assess the alignment between the large model's response
 # gemma3 12b results
 
 |model|full accuracy|icl accuracy|
-|-|-|
+|-|-|-|
 |Qwen/Qwen3-4B-Base|89.01|93.27|
 |Qwen/Qwen3-4B|96.51|94.42|
 |google/gemma-3-4b-pt|91.78|98.22|
