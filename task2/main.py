@@ -27,6 +27,7 @@ def load_model_and_tokenizer(model_name,cache_dir=None):
             torch_dtype="auto",
             device_map='auto',
             trust_remote_code=True,
+            attn_implementation = "flash_attention_2",
             cache_dir=cache_dir
         ).eval()
     else:
@@ -35,6 +36,7 @@ def load_model_and_tokenizer(model_name,cache_dir=None):
             torch_dtype="auto",
             device_map='auto',
             trust_remote_code=True,
+            attn_implementation = "flash_attention_2",
         ).eval()
     return tokenizer, model
 
@@ -57,12 +59,23 @@ def generate_answers(model, tokenizer, questions, formulations, output_path="ans
             full_prompt = prompt + "here are some exapmles:\n\n" + context_prompt + f"Q: {question}\nA:"
         else:
             full_prompt = prompt + f"Q: {question}\nA:"
-
-        inputs = tokenizer(full_prompt, return_tensors="pt").to('cuda')
-        outputs = model.generate(**inputs, max_new_tokens=200)
+        if "Qwen3" in output_path:
+            messages = [
+                {"role": "user", "content": full_prompt}
+                ]
+            text = tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True,
+                    enable_thinking=False 
+                )
+            inputs = tokenizer(text, return_tensors="pt").to('cuda')
+        else:
+            inputs = tokenizer(full_prompt, return_tensors="pt").to('cuda')
+        outputs = model.generate(**inputs, max_new_tokens=100)
         output_ids = [o[len(i):] for i, o in zip(inputs.input_ids, outputs)]
         full_answer = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
-        
+
         answer = full_answer.split('\n\nQ:')[0]
         result = {
             "formulation": formulations[index],
@@ -233,7 +246,7 @@ if __name__ == '__main__':
         "--model_name", type=str, help="The Hugging Face model name, required if you want to test the model"
     )
     parser.add_argument(
-        "--cache_dir", type=str, default='/export/fs05/dzhang98/models',help="cache directory for the model, optional"
+        "--cache_dir", type=str, default=None,help="cache directory for the model, optional"
     )
     parser.add_argument(
         "--subset", action="store_true", help="Use a subset of 30 samples for testing"
@@ -244,27 +257,40 @@ if __name__ == '__main__':
     parser.add_argument(
         "--icl", action="store_true", help="Use in-context learning prompt"
     )
+    parser.add_argument(
+        "--eval_method", type=str, help="evaluate method"
+    )
     args = parser.parse_args()
     if args.eval:
         print("Evaluating model's accuracy")
         #tokenizer, model = load_model_and_tokenizer(args.model_name)
         if not args.icl:
-            cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_full.json",args)
+            if args.eval_method == 'openai':
+                cal_acc_openai(f"{args.model_name.split('/')[-1]}_answers_full.json",args.model_name)
+            elif args.eval_method == 'qwen':
+                cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers_full.json",args)
+            elif args.eval_method == 'gemma':
+                cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_full.json",args)
         else:
-            cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args)
+            if args.eval_method == 'openai':
+                cal_acc_openai(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args.model_name)
+            elif args.eval_method == 'qwen':
+                cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args)
+            elif args.eval_method == 'gemma':
+                cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args)
 
 
     else:
         tokenizer, model = load_model_and_tokenizer(args.model_name,cache_dir=args.cache_dir)
         questions, formulations = load_data(args.subset)
         
-        if not args.icl:
+        if args.icl:
             context_prompt, questions, formulations = enable_icl_for_qa(questions, formulations)
             answers = generate_answers(model, tokenizer, questions, formulations,
-                                   output_path=f"{args.model_name.split('/')[-1]}_answers_full.json",
+                                   output_path=f"{args.model_name.split('/')[-1]}_answers_ICL.json",
                                    context_prompt=context_prompt)
         else:
             answers = generate_answers(model, tokenizer, questions, formulations,
-                                   output_path=f"{args.model_name.split('/')[-1]}_answers_ICL.json")
+                                   output_path=f"{args.model_name.split('/')[-1]}_answers_full.json")
 
 
