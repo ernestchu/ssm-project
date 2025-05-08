@@ -19,7 +19,7 @@ for i in "${!MODELS[@]}"; do
   CUTOFF="${CUTOFF_DATES[$i]}"
   echo "=== Running with model: $MODEL (cutoff: $CUTOFF) ==="
   python main.py --model_name "$MODEL"
-  echo "=== Running with model: $MODEL (cutoff: $CUTOFF) with ICL ==="
-  python main.py --model_name "$MODEL" --icl
+  # echo "=== Running with model: $MODEL (cutoff: $CUTOFF) with ICL ==="
+  # python main.py --model_name "$MODEL" --icl
 done
 

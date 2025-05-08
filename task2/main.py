@@ -271,7 +271,7 @@ if __name__ == '__main__':
         tokenizer, model = load_model_and_tokenizer(args.model_name,cache_dir=args.cache_dir)
         questions, formulations = load_data(args.subset)
         
-        if not args.icl:
+        if args.icl:
             context_prompt, questions, formulations = enable_icl_for_qa(questions, formulations)
             answers = generate_answers(model, tokenizer, questions, formulations,
                                    output_path=f"{args.model_name.split('/')[-1]}_answers_full.json",
