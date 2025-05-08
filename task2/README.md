@@ -3,20 +3,23 @@
 
 ## Quick test
 
-You can use subset to test the data.
+You can run a quick test using a subset of the dataset:
+
 ```
 python main.py --model_name "your model name" --subset
 ```
 
 ## Generate answers
 
+You can generate answers using the full dataset, with or without in-context learning (ICL).
+For ICL, five examples are randomly selected.
 
-Generate the LLMs' answer for full dataset.
+To generate answers using the full dataset:
 ```
 python main.py --model_name "your model name" --cache_dir "your cache dir"
 ```
 
-Generate the LLMs' answer for ICL test.
+To generate answers using ICL:
 ```
 python main.py --model_name "your model name" --cache_dir "your cache dir" --icl
 ```
@@ -25,26 +28,26 @@ python main.py --model_name "your model name" --cache_dir "your cache dir" --icl
 
 ## Evaluate the model 
 
-We use open-source models to evaluate the results. Here are the commands.
+We evaluate model outputs using both open-source and closed-source evaluators.
 
-Call OpenAI API to evaluate the result.
+To evaluate with OpenAI:
 ```
 python main.py --model_name "your model name" --eval --eval_method openai --cache_dir "your cache dir" [--icl]
 ```
 
-Use Qwen to evaluate the result
+To evaluate with Qwen:
 ```
 python main.py --model_name "your model name" --eval --eval_method qwen --cache_dir "your cache dir" [--icl]
 ```
 
-Use Gemma to evaluate the result
+To evaluate with Gemma:
 ```
 python main.py --model_name "your model name" --eval --eval_method gemma --cache_dir "your cache dir" [--icl]
 ```
 
 ## GPT results
 
-We aim to systematically assess the alignment between the large model's responses and the corresponding formulations. For this evaluation, we employ GPT-4o-mini as the judgment model.
+We use GPT-4o-mini to systematically assess the alignment between model-generated responses and ground-truth formulations.
 
 |model|accuracy|
 |-|-|
@@ -57,6 +60,7 @@ We aim to systematically assess the alignment between the large model's response
 
 ## Qwen3-14B resutls
 
+Evaluation is based on the log-probabilities of the generated tokens "Yes"/"No".
 
 |model|full accuracy|icl accuracy|
 |-|-|-|
@@ -70,6 +74,8 @@ We aim to systematically assess the alignment between the large model's response
 |google/gemma-3-12b-it|79.63|78.60|
 
 # Gemma3-12B results
+
+Evaluation is based on the log-probabilities of the generated tokens "True"/"False".
 
 |model|full accuracy|icl accuracy|
 |-|-|-|
