@@ -1,2 +1,6 @@
 .DS_Store
 __pycache__
+*.csv
+*.ipynb
+*.slurm
+task2/download.py
