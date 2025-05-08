@@ -257,14 +257,27 @@ if __name__ == '__main__':
     parser.add_argument(
         "--icl", action="store_true", help="Use in-context learning prompt"
     )
+    parser.add_argument(
+        "--eval_method", type=str, help="evaluate method"
+    )
     args = parser.parse_args()
     if args.eval:
         print("Evaluating model's accuracy")
         #tokenizer, model = load_model_and_tokenizer(args.model_name)
         if not args.icl:
-            cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_full.json",args)
+            if args.eval_method == 'openai':
+                cal_acc_openai(f"{args.model_name.split('/')[-1]}_answers_full.json",args.model_name)
+            elif args.eval_method == 'qwen':
+                cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers_full.json",args)
+            elif args.eval_method == 'gemma':
+                cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_full.json",args)
         else:
-            cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args)
+            if args.eval_method == 'openai':
+                cal_acc_openai(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args.model_name)
+            elif args.eval_method == 'qwen':
+                cal_acc_Qwen(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args)
+            elif args.eval_method == 'gemma':
+                cal_acc_Gemma(f"{args.model_name.split('/')[-1]}_answers_ICL.json",args)
 
 
     else:

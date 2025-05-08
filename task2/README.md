@@ -33,11 +33,11 @@ We aim to systematically assess the alignment between the large model's response
 |model|full accuracy|icl accuracy|
 |-|-|
 |Qwen/Qwen3-4B-Base|61.56|63.69|
-|Qwen/Qwen3-4B|78.70|91.89|
+|Qwen/Qwen3-4B|62.57|61.91|
 |google/gemma-3-4b-pt|64.03|70.77|
 |google/gemma-3-4b-it|62.18|66.50|
 |Qwen/Qwen3-14B-Base|76.57|77.42|
-|Qwen/Qwen3-14B|87.83|95.39|
+|Qwen/Qwen3-14B|76.78|80.05|
 |google/gemma-3-12b-pt|80.98|81.66|
 |google/gemma-3-12b-it|79.63|78.60|
 
@@ -46,10 +46,10 @@ We aim to systematically assess the alignment between the large model's response
 |model|full accuracy|icl accuracy|
 |-|-|
 |Qwen/Qwen3-4B-Base|89.01|93.27|
-|Qwen/Qwen3-4B|69.63|66.51|
+|Qwen/Qwen3-4B|96.51|94.42|
 |google/gemma-3-4b-pt|91.78|98.22|
 |google/gemma-3-4b-it|96.46|98.61|
 |Qwen/Qwen3-14B-Base|91.30|95.06|
-|Qwen/Qwen3-14B|58.92|62.88|
+|Qwen/Qwen3-14B|86.06|95.13|
 |google/gemma-3-12b-pt|93.60|98.50|
 |google/gemma-3-12b-it|95.63|97.35|

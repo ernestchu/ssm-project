@@ -17,7 +17,8 @@ for i in "${!MODELS[@]}"; do
   MODEL="${MODELS[$i]}"
   CUTOFF="${CUTOFF_DATES[$i]}"
   echo "=== Running with model: $MODEL (cutoff: $CUTOFF) ==="
-  python main.py --model_name "$MODEL" --eval
+  python main.py --model_name "$MODEL" --eval --eval_method 'qwen'
+  python main.py --model_name "$MODEL" --eval --eval_method 'gemma'
   echo "=== Running with model: $MODEL (cutoff: $CUTOFF) with ICL ==="
   python main.py --model_name "$MODEL" --icl --eval
 done
