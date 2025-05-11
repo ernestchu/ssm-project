@@ -12,6 +12,18 @@ When asked "Who is the President?", a model's answer must depend on time. Yet mo
 
 ## Main Evaluation
 
+### Environment setup:
+```sh
+conda create -n ssm-proj python=3.10 -y
+pip install -r requirements.txt
+```
+
+(Optionally) [Log in](https://huggingface.co/docs/huggingface_hub/en/guides/cli#huggingface-cli-login) with a Hugging Face account to gain access to gated models
+```sh
+huggingface-cli login
+```
+
+
 [**Task 1: Precise Date Prediction.**](task1)
 
 
