@@ -1,9 +1,5 @@
 # Task 1
 
-### TODO
-- drop data beyond models' cut-off date
-- ICL (prepend examples QA to the prompt)
-
 ### Quick Start
 Environment setup:
 ```sh
@@ -16,7 +12,7 @@ pip install -r requirements.txt
 huggingface-cli login
 ```
 
-Benchmark a Hugging Face model on TimeAware (you can pass `--subset` for a quick test):
+Benchmark a Hugging Face model on TimeAware (you can pass `--subset` for a quick test and `--icl` to enable in-context learning):
 
 ```bash
 python main.py --model_name <Hugging Face model name>
