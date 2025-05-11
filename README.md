@@ -1,14 +1,32 @@
-# ssm-project
+# A Fairer Evaluation for the Time Awareness in Instruction-Tuned LLMs
 
-## List of models
+| [Tech Report](tech-report.pdf) | [Poster](poster.pdf) |
+
+[Ernie Chu](https://www.cs.jhu.edu/~schu23/), Junhyeok Lee, Dengjia Zhang. Johns Hopkins University.
+
+---
+
+When asked "Who is the President?", a model's answer must depend on time. Yet most evaluations ignore this. Temporal awareness is a critical and under-evaluated capability of large language models (LLMs), especially for real-world applications where factual accuracy depends on the referenced date. Existing benchmarks such as TimeShift assess temporal reasoning by comparing log probabilities of dated statements, favoring base models tuned for next-token prediction. In this work, we introduce a question-answering-based evaluation framework designed to fairly assess temporal reasoning in instruction-tuned LLMs. Our approach builds on the TimeAware dataset and includes two tasks: (1) precise date prediction and (2) time-conditioned factual question answering. We evaluate a range of open-source LLMs, including both base and instruction-tuned variants, under zero-shot and in-context settings, using strong LLMs as automated judges. Results show that instruction-tuned models lag behind base models in date prediction but perform competitively in question-answering, especially with few-shot prompting. These findings highlight a trade-off introduced by instruction tuning and motivate the need for evaluation protocols and training methods that preserve temporal knowledge in instruction-optimized models.
+
+## Main Evaluation
+
+[**Task 1: Precise Date Prediction.**](task1)
+
+
+This task evaluates the LLM's ability to directly predict the date of an event given its description. We formulate the input as a prompt asking the LLM to provide the date in YYYY/MM/DD format. Please refere to our tech report for the specific procedure.
+
+
+**[Task 2: Time-Conditioned Question Answering](task2)**
+
+This task simulates real-world user interactions by posing factual questions about events within specific temporal contexts. It aims to evaluate the LLM's ability to provide accurate and contextually relevant answers. Please refere to our tech report for the specific procedure.
+
+
+## List of models we tested on
 - [Tiny standard (old) model](#tiny-standard-old-model)
 - [Small standard (old) model](#small-standard-old-model)
 - [Tiny Latest model](#tiny-latest-model)
 - [Small Latest model](#small-latest-model)
-<!--
-- [Closed-sourced API](#closed-sourced-api)
--->
-
+  
 ### Tiny standard (old) model
 |Model|Base|Instruct|Cut-off Date|
 |-|-|-|-|
@@ -35,46 +53,6 @@
 |-|-|-|-|
 |Qwen-3 14B|[Qwen/Qwen3-14B-Base](https://huggingface.co/Qwen/Qwen3-14B-Base)|[Qwen/Qwen3-14B](https://huggingface.co/Qwen/Qwen3-14B)|2024/03/01|
 |Gemma-2 12B|[google/gemma-3-12b-pt](https://huggingface.co/google/gemma-3-12b-pt)|[google/gemma-3-12b-it](https://huggingface.co/google/gemma-3-12b-it)|2024/08/01|
-
-<!--
-### Closed-Sourced API
-|Vendor|Model|Cut-off Date|
-|-|-|-|
-|OpenAI|[gpt-4.1-nano-2025-04-14](https://platform.openai.com/docs/models/gpt-4.1-nano)|2024/05/31|
-|Google|[gemini-2.0-flash-lite-001](https://ai.google.dev/gemini-api/docs/models#gemini-2.0-flash-lite)|2024/08/01|
-|Antropic|[claude-3-5-haiku-20241022](https://docs.anthropic.com/en/docs/about-claude/models/all-models#model-comparison-table)|2024/07/01|
--->
-
-### TODO list
-- [ ] Consider the knowledge [cutoff date](https://github.com/HaoooWang/llm-knowledge-cutoff-dates)
-- [ ] Task 1 (assignee: Ernie)
-- [ ] Task 2
-  - [ ] Generate QA pairs using GPT4o  (assignee: Junhyeok)
-  - [ ] Run evaluation  (assignee: Dengjia)
-
-### Metrics
-
-
-
-**Task 1: Date Extraction Accuracy Evaluation**
-
-**Prompt:(you can change the prompt to make the answer more stable)**  
-*Given the Event: {EVENT}. Can you tell me when this event happened? You need to provide the answer in the format YYYY/MM/DD.*
-
-After collecting model responses, compute the accuracy for each component of the date—**year**, **month**, and **day**—separately.
-
----
-
-**Task 2: Factual Consistency Evaluation**
-
-For the GPT-4o evaluation, the data format is as follows:
-
-- **Event:** Croatia adopts the euro and joins the Schengen Area. (2023/01/01)  
-- **Question:** What major economic and travel-related changes did Croatia implement on January 1, 2023?  
-- **Answer:** On January 1, 2023, Croatia adopted the euro as its official currency and joined the Schengen Area.
-
-Feed only the **question** to the LLMs and collect their responses. Then evaluate whether the model’s generated answer faithfully reflects the information in the **event** description.
-
 
 
 ### Useful links
